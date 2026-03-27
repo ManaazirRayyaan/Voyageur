@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ package.title }} | Voyageur{% endblock %}
+{% block content %}
+<main class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+  <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+    <section class="space-y-6">
+      <div class="section-card p-8">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="badge-gradient rounded-full px-4 py-2 text-sm font-semibold">{{ package.category_label }}</span>
+          {% if package.vibe %}<span class="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold">{{ package.vibe }}</span>{% endif %}
+        </div>
+        <h1 class="font-display mt-5 text-4xl font-semibold">{{ package.title }}</h1>
+        <p class="mt-4 text-slate-600">{{ package.description }}</p>
+        <div class="mt-6 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl bg-slate-50 p-4"><p class="text-sm text-slate-500">From</p><strong>{{ package.from_location|default:"Flexible" }}</strong></div>
+          <div class="rounded-2xl bg-slate-50 p-4"><p class="text-sm text-slate-500">To</p><strong>{{ package.to_location|default:package.destination.name }}</strong></div>
+          <div class="rounded-2xl bg-slate-50 p-4"><p class="text-sm text-slate-500">Total Cost</p><strong>${{ package.total_cost|default:package.price }}</strong></div>
+        </div>
+      </div>
+      <div class="section-card p-8">
+        <h2 class="text-2xl font-semibold">Cost Breakdown</h2>
+        <div class="mt-6 grid gap-4 sm:grid-cols-5">
+          <div class="rounded-2xl bg-slate-50 p-4 text-sm"><p class="text-slate-500">Flight</p><strong>${{ package.flight_cost }}</strong></div>
+          <div class="rounded-2xl bg-slate-50 p-4 text-sm"><p class="text-slate-500">Hotel</p><strong>${{ package.hotel_cost }}</strong></div>
+          <div class="rounded-2xl bg-slate-50 p-4 text-sm"><p class="text-slate-500">Food</p><strong>${{ package.food_cost }}</strong></div>
+          <div class="rounded-2xl bg-slate-50 p-4 text-sm"><p class="text-slate-500">Activities</p><strong>${{ package.activities_cost }}</strong></div>
+          <div class="rounded-2xl bg-slate-50 p-4 text-sm"><p class="text-slate-500">Taxi</p><strong>${{ package.taxi_cost }}</strong></div>
+        </div>
+      </div>
+    </section>
+    <aside class="section-card p-7">
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-sky-700">Reserve Package</p>
+      <p class="mt-4 text-4xl font-bold">${{ package.total_cost|default:package.price }}</p>
+      <a href="{% url 'bookings:create_booking' package.slug %}" class="btn-primary mt-6 block rounded-3xl px-6 py-4 text-center text-sm font-semibold">Book Now</a>
+      {% if request.user.is_authenticated %}
+        <form method="post" action="{% url 'users:toggle_saved_package' package.slug %}" class="mt-3">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <button type="submit" class="btn-secondary block w-full rounded-3xl px-6 py-4 text-center text-sm font-semibold">
+            {% if is_in_wishlist %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}
+          </button>
+        </form>
+      {% endif %}
+    </aside>
+  </div>
+</main>
+{% endblock %}

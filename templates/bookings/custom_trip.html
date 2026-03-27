@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Custom Trip Builder{% endblock %}
+{% block content %}
+<main class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+  <section class="section-card p-8">
+    <h1 class="font-display text-4xl font-semibold">Build a custom trip</h1>
+    <form method="post" class="mt-8 space-y-4">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div>{{ form.destination.label_tag }}{{ form.destination }}{{ form.destination.errors }}</div>
+      <div>{{ form.hotel.label_tag }}{{ form.hotel }}{{ form.hotel.errors }}</div>
+      <div>{{ form.transport.label_tag }}{{ form.transport }}{{ form.transport.errors }}</div>
+      <div>{{ form.travelers.label_tag }}{{ form.travelers }}{{ form.travelers.errors }}</div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>{{ form.start_date.label_tag }}{{ form.start_date }}{{ form.start_date.errors }}</div>
+        <div>{{ form.end_date.label_tag }}{{ form.end_date }}{{ form.end_date.errors }}</div>
+      </div>
+      <div>{{ form.custom_notes.label_tag }}{{ form.custom_notes }}{{ form.custom_notes.errors }}</div>
+      <button type="submit" class="btn-primary rounded-full px-6 py-3 text-sm font-semibold">Create Custom Booking</button>
+    </form>
+  </section>
+</main>
+{% endblock %}

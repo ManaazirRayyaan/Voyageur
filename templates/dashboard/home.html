@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Voyageur | Home{% endblock %}
+{% block content %}
+<main class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+  <section class="section-card overflow-hidden p-8 lg:p-12">
+    <span class="badge-gradient inline-flex rounded-full px-4 py-2 text-sm font-semibold">Premium travel planner</span>
+    <h1 class="font-display mt-5 text-4xl font-semibold lg:text-6xl">Plan, save, and book memorable trips.</h1>
+    <p class="mt-4 max-w-2xl text-slate-600">Browse curated packages, manage bookings, maintain your wishlist, and update your profile from one polished Django experience.</p>
+    <div class="mt-8 flex flex-wrap gap-4">
+      <a href="{% url 'packages:list' %}" class="btn-primary rounded-full px-6 py-4 text-sm font-semibold">Browse Packages</a>
+      <a href="{% url 'bookings:custom_trip' %}" class="btn-secondary rounded-full px-6 py-4 text-sm font-semibold">Build Custom Trip</a>
+    </div>
+  </section>
+  <section class="mt-10 grid gap-6 lg:grid-cols-3">
+    {% for package in featured_packages %}
+      <article class="travel-card p-6">
+        <h2 class="text-xl font-semibold">{{ package.title }}</h2>
+        <p class="mt-2 text-sm text-slate-500">{{ package.to_location|default:package.destination.name }}</p>
+        <div class="mt-4 flex items-center justify-between"><span class="text-sm">{{ package.category_label }}</span><strong>${{ package.total_cost|default:package.price }}</strong></div>
+        <a href="{% url 'packages:detail' package.slug %}" class="btn-primary mt-5 inline-block rounded-full px-4 py-2.5 text-sm font-semibold">View Details</a>
+      </article>
+    {% empty %}
+      <p class="text-sm text-slate-600">No featured packages available.</p>
+    {% endfor %}
+  </section>
+</main>
+{% endblock %}

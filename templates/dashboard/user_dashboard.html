@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Voyageur{% endblock %}
+{% block content %}
+<main class="dashboard-shell">
+  <aside class="dashboard-sidebar">
+    <a href="{% url 'dashboard:home' %}" class="flex items-center gap-3">
+      <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10"><i class="fa-solid fa-compass"></i></span>
+      <div><strong class="block text-lg">Voyageur</strong><span class="text-sm text-slate-300">Traveler dashboard</span></div>
+    </a>
+    <nav class="mt-10 space-y-3 text-sm font-medium">
+      <a href="{% url 'dashboard:user_dashboard' %}" class="block rounded-2xl bg-white/10 px-4 py-3">Dashboard</a>
+      <a href="{% url 'users:profile_settings' %}" class="block rounded-2xl px-4 py-3 hover:bg-white/10">Edit Profile</a>
+      <a href="{% url 'users:wishlist' %}" class="block rounded-2xl px-4 py-3 hover:bg-white/10">Wishlist</a>
+      <a href="{% url 'packages:list' %}" class="block rounded-2xl px-4 py-3 hover:bg-white/10">Browse Packages</a>
+      <a href="{% url 'users:logout' %}" class="block rounded-2xl px-4 py-3 hover:bg-white/10">Logout</a>
+    </nav>
+  </aside>
+  <section class="dashboard-main">
+    <div class="dashboard-topbar">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-sky-700">Dashboard</p>
+        <h1 class="font-display text-3xl font-semibold">Welcome, {{ request.user.get_full_name|default:request.user.username }}</h1>
+      </div>
+      <a href="{% url 'bookings:custom_trip' %}" class="btn-primary rounded-full px-5 py-3 text-sm font-semibold">Create New Trip</a>
+    </div>
+    <div class="p-6 lg:p-8">
+      <div class="grid gap-6 xl:grid-cols-3">
+        <div class="section-card p-6"><p class="text-sm text-slate-500">Bookings</p><strong class="mt-2 block text-3xl">{{ bookings|length }}</strong></div>
+        <div class="section-card p-6"><p class="text-sm text-slate-500">Wishlist Items</p><strong class="mt-2 block text-3xl">{{ wishlist_items|length }}</strong></div>
+        <div class="section-card p-6"><p class="text-sm text-slate-500">Phone</p><strong class="mt-2 block text-3xl">{{ profile.phone|default:"Add phone" }}</strong></div>
+      </div>
+      <div class="mt-8 grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
+        <section class="section-card p-6">
+          <h2 class="text-2xl font-semibold">My Bookings</h2>
+          <div class="mt-6 space-y-4">
+            {% for booking in bookings %}
+              <article class="travel-card p-5">
+                <div class="flex items-center justify-between gap-4">
+                  <div>
+                    <h3 class="text-xl font-semibold">{{ booking.package.title|default:booking.destination.name }}</h3>
+                    <p class="mt-2 text-sm text-slate-600">{{ booking.start_date }} to {{ booking.end_date }} • {{ booking.reference }}</p>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">{{ booking.get_status_display }}</span>
+                    <a href="{% url 'bookings:download_itinerary' booking.reference %}" class="btn-secondary rounded-full px-4 py-2 text-sm font-semibold">Download Invoice (PDF)</a>
+                  </div>
+                </div>
+              </article>
+            {% empty %}
+              <p class="text-sm text-slate-600">No bookings yet.</p>
+            {% endfor %}
+          </div>
+        </section>
+        <section class="section-card p-6">
+          <h2 class="text-2xl font-semibold">Wishlist</h2>
+          <div class="mt-5 space-y-4">
+            {% for item in wishlist_items %}
+              <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-4">
+                <span>{{ item.package.title }}</span>
+                <a href="{% url 'packages:detail' item.package.slug %}" class="font-semibold text-sky-700">Open</a>
+              </div>
+            {% empty %}
+              <p class="text-sm text-slate-600">Your wishlist is empty.</p>
+            {% endfor %}
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

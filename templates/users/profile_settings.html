@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile{% endblock %}
+{% block content %}
+<main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+  <section class="section-card p-8">
+    <h1 class="font-display text-4xl font-semibold">Edit Profile</h1>
+    <form method="post" enctype="multipart/form-data" class="mt-8 space-y-4">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div>{{ form.full_name.label_tag }}{{ form.full_name }}{{ form.full_name.errors }}</div>
+      <div>{{ form.username.label_tag }}{{ form.username }}{{ form.username.errors }}</div>
+      <div>{{ form.email.label_tag }}{{ form.email }}{{ form.email.errors }}</div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>{{ form.age.label_tag }}{{ form.age }}{{ form.age.errors }}</div>
+        <div>{{ form.gender.label_tag }}{{ form.gender }}{{ form.gender.errors }}</div>
+      </div>
+      <div>{{ form.phone.label_tag }}{{ form.phone }}{{ form.phone.errors }}</div>
+      <div>{{ form.profile_image.label_tag }}{{ form.profile_image }}{{ form.profile_image.errors }}</div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>{{ form.new_password1.label_tag }}{{ form.new_password1 }}{{ form.new_password1.errors }}</div>
+        <div>{{ form.new_password2.label_tag }}{{ form.new_password2 }}{{ form.new_password2.errors }}</div>
+      </div>
+      <button type="submit" class="btn-primary rounded-full px-6 py-3 text-sm font-semibold">Save Changes</button>
+    </form>
+  </section>
+</main>
+{% endblock %}
