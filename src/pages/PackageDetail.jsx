@@ -4,12 +4,19 @@ import BookingSidebar from "../components/BookingSidebar";
 import ReviewCard from "../components/ReviewCard";
 import StarRating from "../components/StarRating";
 import { usePackages } from "../context/PackageContext";
+import { FALLBACK_IMAGE, getFallbackImages, getImage } from "../utils/fetchImages";
 
 function PackageDetail() {
   const { id } = useParams();
-  const { getPackageById, fetchPackageDetail } = usePackages();
+  const { getPackageById, fetchPackageDetail, imageCache, fetchDestinationImages } = usePackages();
   const [packageItem, setPackageItem] = useState(() => getPackageById(id));
   const [hasLoaded, setHasLoaded] = useState(Boolean(getPackageById(id)));
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [isGalleryLoading, setIsGalleryLoading] = useState(true);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -29,11 +36,42 @@ function PackageDetail() {
     };
   }, [id]);
 
+  useEffect(() => {
+    if (!packageItem?.destination) return;
+    let active = true;
+    const cacheKey = `${String(packageItem.destination).toLowerCase()}::6`;
+    if (imageCache[cacheKey]?.length) {
+      setGalleryImages(imageCache[cacheKey]);
+      setIsGalleryLoading(false);
+      return;
+    }
+
+    setIsGalleryLoading(true);
+    fetchDestinationImages(packageItem.destination, 6).then((images) => {
+      if (!active) return;
+      setGalleryImages(images.length ? images : getFallbackImages(6, getImage(packageItem.destination)));
+      setIsGalleryLoading(false);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [fetchDestinationImages, imageCache, packageItem.destination]);
+
   if (!hasLoaded && !packageItem) {
     return <main className="page-shell flex min-h-screen items-center justify-center px-4 py-28 text-slate-600">Loading package...</main>;
   }
 
-  if (!packageItem) return <Navigate to="/packages" replace />;
+  if (!packageItem) {
+    return (
+      <main className="page-shell flex min-h-screen items-center justify-center px-4 py-28 text-slate-600">
+        <div className="section-card max-w-lg px-8 py-10 text-center">
+          <h1 className="font-display text-3xl font-semibold text-slate-900">Package not found</h1>
+          <p className="mt-3 text-sm text-slate-500">This package may have been removed or is no longer available.</p>
+        </div>
+      </main>
+    );
+  }
 
   const packageHotels = packageItem.hotels || [];
   const packageTransports = packageItem.transports || [];
@@ -44,9 +82,39 @@ function PackageDetail() {
       <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
         <section className="space-y-8">
           <div className="section-card overflow-hidden">
-            <img src={packageItem.heroImage} alt={packageItem.title} className="h-[420px] w-full object-cover" loading="eager" />
+            {isGalleryLoading ? (
+              <div className="h-[420px] w-full animate-pulse bg-slate-200" />
+            ) : (
+              <img
+                src={galleryImages[0] || getImage(packageItem.destination) || FALLBACK_IMAGE}
+                alt={packageItem.title}
+                className="h-[420px] w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+                loading="eager"
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = FALLBACK_IMAGE;
+                }}
+              />
+            )}
             <div className="grid grid-cols-3 gap-3 p-4 sm:grid-cols-4">
-              {packageItem.gallery.map((image, index) => <img key={index} src={image} alt={`${packageItem.title} ${index + 1}`} className="h-24 w-full rounded-2xl object-cover" loading="lazy" />)}
+              {(isGalleryLoading ? Array.from({ length: 6 }, (_, index) => ({ id: index })) : galleryImages.slice(0, 6)).map((image, index) =>
+                isGalleryLoading ? (
+                  <div key={index} className="h-24 w-full animate-pulse rounded-2xl bg-slate-200" />
+                ) : (
+                  <img
+                    key={image}
+                    src={image}
+                    alt={`${packageItem.title} ${index + 1}`}
+                    className="h-24 w-full rounded-2xl object-cover transition-transform duration-500 hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = FALLBACK_IMAGE;
+                    }}
+                  />
+                )
+              )}
             </div>
           </div>
 

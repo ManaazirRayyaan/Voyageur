@@ -3,6 +3,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand
 
+from packages.category_utils import normalize_package_category
 from packages.models import Destination, Package
 
 
@@ -23,6 +24,7 @@ class Command(BaseCommand):
             to_location = item["to"].strip()
             category = item["category"].strip()
             vibe = item["vibe"].strip()
+            total_cost = item["flight"] + item["hotel"] + item["food"] + item["activities"] + item["taxi"]
 
             destination_name, country = self._split_destination(to_location)
             destination, _ = Destination.objects.get_or_create(
@@ -45,7 +47,7 @@ class Command(BaseCommand):
                 "price": 0,
                 "duration_days": 3 + (external_id % 6),
                 "rating": round(3.8 + (external_id % 6) * 0.2, 1),
-                "category": category,
+                "category": normalize_package_category(category, vibe, destination_name, total_cost),
                 "vibe": vibe,
                 "from_location": from_location,
                 "to_location": to_location,

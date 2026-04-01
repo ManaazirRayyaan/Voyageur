@@ -21,12 +21,23 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 
+function RouteLoadingScreen() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(6,182,212,0.08),transparent_30%),radial-gradient(circle_at_top_right,rgba(255,122,89,0.12),transparent_28%),linear-gradient(180deg,#f8fbff_0%,#ffffff_38%,#f8fafc_100%)] px-6 text-slate-700">
+      <div className="rounded-[2rem] border border-white/60 bg-white/75 px-8 py-6 shadow-[0_24px_60px_rgba(15,23,42,0.12)] backdrop-blur-xl">
+        <p className="font-display text-2xl font-semibold text-slate-900">Loading Voyageur...</p>
+        <p className="mt-2 text-sm text-slate-500">Preparing the next screen.</p>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <PackageProvider>
         <BookingProvider>
-          <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-slate-600">Loading…</div>}>
+          <Suspense fallback={<RouteLoadingScreen />}>
             <Routes>
               <Route element={<MainLayout />}>
                 <Route path="/" element={<Home />} />

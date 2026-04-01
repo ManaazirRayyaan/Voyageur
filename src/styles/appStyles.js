@@ -40,6 +40,18 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.liquid-glass-nav {
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(239, 246, 255, 0.48)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(148, 163, 184, 0.08));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 18px 50px rgba(15, 23, 42, 0.12);
+}
+
 .page-shell {
   position: relative;
   overflow: hidden;

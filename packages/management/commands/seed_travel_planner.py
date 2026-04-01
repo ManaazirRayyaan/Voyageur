@@ -162,7 +162,7 @@ class Command(BaseCommand):
                 "end_date": "2026-06-20",
                 "total_price": Decimal("7300.00"),
                 "trip_type": Booking.PACKAGE,
-                "status": Booking.CONFIRMED,
+                "status": Booking.BOOKED,
             },
         )
 

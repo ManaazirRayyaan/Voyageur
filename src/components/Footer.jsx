@@ -12,7 +12,7 @@ function Footer() {
               <p className="text-sm text-slate-500">Premium travel planner</p>
             </div>
           </div>
-          <p className="mt-4 text-sm leading-7 text-slate-600">A React-powered travel platform with clean routing, stateful booking, and polished discovery flows.</p>
+          <p className="mt-4 text-sm leading-7 text-slate-600">Plan smarter. Travel better. Explore the world with confidence.</p>
         </div>
         <div>
           <h3 className="font-semibold">Explore</h3>

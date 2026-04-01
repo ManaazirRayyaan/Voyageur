@@ -1,8 +1,3 @@
-/*
-  Shared UI interactions for the Travel Planner frontend.
-  Handles navigation, carousels, filters, modals, review ratings, and custom trip step logic.
-*/
-
 document.addEventListener("DOMContentLoaded", () => {
   initMobileMenu();
   initNavbarState();

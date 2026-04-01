@@ -1,6 +1,4 @@
-from django.utils.decorators import method_decorator
 from django.db.models import Q
-from django.views.decorators.cache import cache_page
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 
@@ -9,12 +7,11 @@ from .serializers import PackageDetailSerializer, PackageListSerializer
 
 
 class PackagePagination(PageNumberPagination):
-    page_size = 10
+    page_size = 12
     page_size_query_param = "page_size"
-    max_page_size = 10
+    max_page_size = 30
 
 
-@method_decorator(cache_page(60 * 5), name="dispatch")
 class PackageListAPIView(generics.ListAPIView):
     serializer_class = PackageListSerializer
     pagination_class = PackagePagination
@@ -56,7 +53,7 @@ class PackageListAPIView(generics.ListAPIView):
                 | Q(to_location__icontains=destination)
             )
         if category:
-            queryset = queryset.filter(category__icontains=category)
+            queryset = queryset.filter(category__iexact=category)
         if vibe:
             queryset = queryset.filter(vibe__icontains=vibe)
         if max_price:
