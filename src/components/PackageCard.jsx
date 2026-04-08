@@ -4,6 +4,7 @@ import { useBooking } from "../context/BookingContext";
 import { usePackages } from "../context/PackageContext";
 import { FALLBACK_IMAGE, getImage } from "../utils/fetchImages";
 import StarRating from "./StarRating";
+import WeatherBadge from "./WeatherBadge";
 
 function PackageCard({ item, onSave, isSaved }) {
   const { isPackageBooked } = useBooking();
@@ -64,6 +65,9 @@ function PackageCard({ item, onSave, isSaved }) {
         <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
           <span>{item.durationDays} Days</span>
           <span>{item.rating}/5</span>
+        </div>
+        <div className="mt-4">
+          <WeatherBadge latitude={item.latitude} longitude={item.longitude} compact />
         </div>
 
         <div className="mt-auto pt-6">

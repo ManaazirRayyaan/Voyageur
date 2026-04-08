@@ -1,1 +1,0 @@
-import{j as s}from"./index-D6h93oHP.js";function n({rating:r,size:t="text-sm"}){const o=Math.round(r);return s.jsx("div",{className:`rating-stars ${t}`,children:Array.from({length:5},(e,a)=>s.jsx("i",{className:`fa-solid ${a<o?"fa-star":"fa-star-half-stroke"} ${a<Math.floor(r),""}`},a))})}export{n as S};

@@ -43,6 +43,7 @@ class Booking(models.Model):
     trip_type = models.CharField(max_length=20, choices=TRIP_TYPE_CHOICES, default=PACKAGE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=BOOKED)
     custom_notes = models.TextField(blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -90,9 +91,13 @@ class Booking(models.Model):
 
     def calculate_total(self):
         package_cost = self.package.price if self.package else Decimal("0.00")
+        custom_base_cost = Decimal(str(self.metadata.get("basePrice", "0.00") or "0.00"))
         hotel_cost = (self.hotel.price_per_night * self.nights) if self.hotel else Decimal("0.00")
         transport_cost = self.transport.price if self.transport else Decimal("0.00")
-        subtotal = package_cost + hotel_cost + transport_cost
+        activities_cost = Decimal(str(self.metadata.get("activitiesTotal", "0.00") or "0.00"))
+        food_cost = Decimal(str(self.metadata.get("foodTotal", "0.00") or "0.00"))
+        local_transport_cost = Decimal(str(self.metadata.get("localTransportTotal", "0.00") or "0.00"))
+        subtotal = package_cost + custom_base_cost + hotel_cost + transport_cost + activities_cost + food_cost + local_transport_cost
         return subtotal * self.travelers
 
     @property

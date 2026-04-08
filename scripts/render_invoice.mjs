@@ -183,6 +183,25 @@ const html = `
         border-top: 1px solid #e2e8f0;
         padding-top: 18px;
       }
+      .activity-list {
+        margin-top: 20px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 18px;
+      }
+      .activity-list h4 {
+        margin: 0 0 10px 0;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #0076CE;
+      }
+      .activity-list ul {
+        margin: 0;
+        padding-left: 18px;
+        color: #475569;
+        font-size: 13px;
+        line-height: 1.8;
+      }
       .footer-copy {
         max-width: 70%;
       }
@@ -271,6 +290,13 @@ const html = `
           </div>
           <div class="price">${currency(totalPaid)}</div>
         </div>
+        ${
+          payload.activitySummary?.length
+            ? `<div class="activity-list"><h4>Selected Activities</h4><ul>${payload.activitySummary
+                .map((item) => `<li>${item}</li>`)
+                .join("")}</ul></div>`
+            : ""
+        }
       </section>
 
       <section class="footer">

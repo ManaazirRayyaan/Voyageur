@@ -80,6 +80,8 @@ class PackageListSerializer(serializers.ModelSerializer):
     destinationSlug = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
     durationDays = serializers.IntegerField(source="duration_days", read_only=True)
+    latitude = serializers.FloatField(source="destination.latitude", read_only=True)
+    longitude = serializers.FloatField(source="destination.longitude", read_only=True)
     featured = serializers.BooleanField(source="is_featured", read_only=True)
     popular = serializers.BooleanField(source="is_popular", read_only=True)
     description = serializers.SerializerMethodField()
@@ -101,6 +103,8 @@ class PackageListSerializer(serializers.ModelSerializer):
             "category",
             "vibe",
             "image",
+            "latitude",
+            "longitude",
             "featured",
             "popular",
         ]

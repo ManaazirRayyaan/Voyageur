@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -21,17 +23,24 @@ class ReviewTests(TestCase):
 
     def test_review_requires_authentication(self):
         response = self.client.post(
-            reverse("reviews:create_generic"),
-            {"destination": self.destination.id, "rating": 5, "comment": "Excellent."},
+            reverse("api-reviews"),
+            data=json.dumps({"destination_id": self.destination.id, "rating": 5, "comment": "Excellent."}),
+            content_type="application/json",
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 401)
 
     def test_authenticated_review_submission(self):
-        self.client.login(username="reviewer", password="StrongPass123")
-        response = self.client.post(
-            reverse("reviews:create_generic"),
-            {"destination": self.destination.id, "rating": 5, "comment": "Excellent."},
-            follow=True,
+        login_response = self.client.post(
+            reverse("api-login"),
+            data=json.dumps({"identifier": "reviewer", "password": "StrongPass123"}),
+            content_type="application/json",
         )
-        self.assertEqual(response.status_code, 200)
+        access = login_response.json()["access"]
+        response = self.client.post(
+            reverse("api-reviews"),
+            data=json.dumps({"destination_id": self.destination.id, "rating": 5, "comment": "Excellent."}),
+            content_type="application/json",
+            HTTP_AUTHORIZATION=f"Bearer {access}",
+        )
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(Review.objects.count(), 1)

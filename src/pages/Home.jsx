@@ -5,7 +5,7 @@ import { usePackages } from "../context/PackageContext";
 
 function Home() {
   const navigate = useNavigate();
-  const { featuredPackages, popularPackages, topDestinations, reviews, setFilters } = usePackages();
+  const { popularPackages, topDestinations, reviews, totalCount, setFilters } = usePackages();
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -26,7 +26,7 @@ function Home() {
         <div className="hero-overlay absolute inset-0" />
         <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-4 pb-16 pt-32 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <span className="badge-gradient inline-flex rounded-full px-4 py-2 text-sm font-semibold">Trusted by 42,000+ premium travelers</span>
+            <span className="badge-gradient inline-flex rounded-full px-4 py-2 text-sm font-semibold">{reviews.length}+ verified traveler reviews across {totalCount}+ curated packages</span>
             <h1 className="font-display mt-6 text-5xl font-semibold leading-tight text-white md:text-6xl">Plan signature journeys with one polished travel workspace.</h1>
             <p className="mt-6 max-w-2xl text-lg text-slate-100">From curated packages to custom itineraries, Voyageur turns discovery, booking, and trip coordination into one high-conviction experience.</p>
           </div>
@@ -34,15 +34,15 @@ function Home() {
           <form onSubmit={handleSearch} className="search-panel mt-10 grid gap-4 rounded-[2rem] p-4 md:grid-cols-4 md:items-end md:p-5">
             <label className="field rounded-3xl px-5 py-4">
               <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Search</span>
-              <input name="query" type="text" defaultValue="Sunset Escape" className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none" />
+              <input name="query" type="text" placeholder="Luxury escape, family getaway..." className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400" />
             </label>
             <label className="field rounded-3xl px-5 py-4">
               <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Destination</span>
-              <input name="destination" type="text" defaultValue="Santorini" className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none" />
+              <input name="destination" type="text" placeholder="Santorini, Kyoto, Dubai..." className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400" />
             </label>
             <label className="field rounded-3xl px-5 py-4">
               <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Budget</span>
-              <input name="budget" type="number" defaultValue="2500" className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none" />
+              <input name="budget" type="number" defaultValue="2500" min="100" className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none" />
             </label>
             <button type="submit" className="btn-primary rounded-3xl px-6 py-4 text-sm font-semibold">Search Premium Escapes</button>
           </form>

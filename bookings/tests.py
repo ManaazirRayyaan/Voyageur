@@ -1,3 +1,4 @@
+import json
 from datetime import date
 
 from django.contrib.auth.models import User
@@ -39,25 +40,47 @@ class BookingFlowTests(TestCase):
         self.package.hotels.add(self.hotel)
         self.package.transports.add(self.transport)
 
-    def test_login_required_for_booking(self):
-        response = self.client.get(reverse("bookings:create_booking", args=[self.package.slug]))
-        self.assertEqual(response.status_code, 302)
-
-    def test_booking_creation_and_download(self):
-        self.client.login(username="traveler", password="StrongPass123")
+    def test_booking_requires_authentication(self):
         response = self.client.post(
-            reverse("bookings:create_booking", args=[self.package.slug]),
-            {
-                "hotel": self.hotel.id,
-                "transport": self.transport.id,
+            reverse("api-book"),
+            data=json.dumps({
+                "package_id": self.package.id,
+                "hotel_id": self.hotel.id,
+                "transport_id": self.transport.id,
                 "travelers": 2,
-                "start_date": date(2026, 6, 14),
-                "end_date": date(2026, 6, 20),
-            },
+                "start_date": "2026-06-14",
+                "end_date": "2026-06-20",
+            }),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_booking_creation_and_invoice_download(self):
+        login_response = self.client.post(
+            reverse("api-login"),
+            data=json.dumps({"identifier": "traveler", "password": "StrongPass123"}),
+            content_type="application/json",
+        )
+        access = login_response.json()["access"]
+        response = self.client.post(
+            reverse("api-book"),
+            data=json.dumps({
+                "package_id": self.package.id,
+                "hotel_id": self.hotel.id,
+                "transport_id": self.transport.id,
+                "travelers": 2,
+                "start_date": date(2026, 6, 14).isoformat(),
+                "end_date": date(2026, 6, 20).isoformat(),
+            }),
+            content_type="application/json",
+            HTTP_AUTHORIZATION=f"Bearer {access}",
         )
         booking = Booking.objects.get(user=self.user)
-        self.assertRedirects(response, reverse("bookings:confirmation", args=[booking.reference]))
+        self.assertEqual(response.status_code, 201)
 
-        download = self.client.get(reverse("bookings:download_itinerary", args=[booking.reference]))
+        download = self.client.get(
+            reverse("api-invoice", args=[booking.id]),
+            HTTP_AUTHORIZATION=f"Bearer {access}",
+        )
         self.assertEqual(download.status_code, 200)
         self.assertIn("attachment;", download["Content-Disposition"])

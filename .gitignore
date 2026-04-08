@@ -3,3 +3,7 @@ node_modules
 __pycache__/
 *.pyc
 media/
+.DS_Store
+.venv/
+staticfiles/
+db.sqlite3

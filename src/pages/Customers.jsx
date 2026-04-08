@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { usePackages } from "../context/PackageContext";
 
 function Customers() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { reviews, averageRating, addReview, packages } = usePackages();
   const [ratingFilter, setRatingFilter] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +13,20 @@ function Customers() {
   const [error, setError] = useState("");
 
   const filteredReviews = useMemo(() => reviews.filter((review) => review.rating >= ratingFilter), [reviews, ratingFilter]);
+  const ratingDistribution = useMemo(() => {
+    const distribution = [5, 4, 3, 2, 1].map((star) => reviews.filter((review) => Math.round(review.rating) === star).length);
+    const maxCount = Math.max(...distribution, 1);
+    return distribution.map((count, index) => ({
+      label: `${5 - index}★`,
+      count,
+      height: count ? Math.max((count / maxCount) * 100, 16) : 10,
+    }));
+  }, [reviews]);
+  const fiveStarShare = useMemo(() => {
+    if (!reviews.length) return 0;
+    return Math.round((reviews.filter((review) => Math.round(review.rating) === 5).length / reviews.length) * 100);
+  }, [reviews]);
+  const destinationsReviewed = useMemo(() => new Set(reviews.map((review) => review.destinationSlug)).size, [reviews]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -53,17 +67,17 @@ function Customers() {
         <div className="section-card p-8">
           <h2 className="text-2xl font-semibold">Review Statistics</h2>
           <div className="mt-8 flex h-64 items-end justify-between gap-4">
-            {[88, 62, 24, 10, 6].map((height, index) => (
-              <div key={index} className="flex flex-1 flex-col items-center gap-3">
-                <div className="chart-bar w-full max-w-[56px]" style={{ height: `${height}%` }} />
-                <span className="text-sm text-slate-500">{5 - index}★</span>
+            {ratingDistribution.map((item) => (
+              <div key={item.label} className="flex flex-1 flex-col items-center gap-3">
+                <div className="chart-bar w-full max-w-[56px]" style={{ height: `${item.height}%` }} />
+                <span className="text-sm text-slate-500">{item.label}</span>
               </div>
             ))}
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             <div className="rounded-3xl bg-slate-50 p-5"><p className="text-sm text-slate-500">Total reviews</p><strong className="mt-2 block text-2xl">{reviews.length}</strong></div>
-            <div className="rounded-3xl bg-slate-50 p-5"><p className="text-sm text-slate-500">Repeat travelers</p><strong className="mt-2 block text-2xl">68%</strong></div>
-            <div className="rounded-3xl bg-slate-50 p-5"><p className="text-sm text-slate-500">Average</p><strong className="mt-2 block text-2xl">{averageRating}</strong></div>
+            <div className="rounded-3xl bg-slate-50 p-5"><p className="text-sm text-slate-500">5-star share</p><strong className="mt-2 block text-2xl">{fiveStarShare}%</strong></div>
+            <div className="rounded-3xl bg-slate-50 p-5"><p className="text-sm text-slate-500">Destinations reviewed</p><strong className="mt-2 block text-2xl">{destinationsReviewed}</strong></div>
           </div>
         </div>
 

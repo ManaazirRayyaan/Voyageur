@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import BookingSidebar from "../components/BookingSidebar";
 import ReviewCard from "../components/ReviewCard";
 import StarRating from "../components/StarRating";
+import WeatherBadge from "../components/WeatherBadge";
 import { usePackages } from "../context/PackageContext";
 import { FALLBACK_IMAGE, getFallbackImages, getImage } from "../utils/fetchImages";
 
@@ -56,7 +57,7 @@ function PackageDetail() {
     return () => {
       active = false;
     };
-  }, [fetchDestinationImages, imageCache, packageItem.destination]);
+  }, [fetchDestinationImages, imageCache, packageItem?.destination]);
 
   if (!hasLoaded && !packageItem) {
     return <main className="page-shell flex min-h-screen items-center justify-center px-4 py-28 text-slate-600">Loading package...</main>;
@@ -129,6 +130,9 @@ function PackageDetail() {
               <div className="rounded-3xl bg-slate-50 p-5"><p className="text-sm text-slate-500">Location</p><strong className="mt-2 block text-lg">{packageItem.destination}</strong></div>
               <div className="rounded-3xl bg-slate-50 p-5"><p className="text-sm text-slate-500">Duration</p><strong className="mt-2 block text-lg">{packageItem.durationDays} Days</strong></div>
               <div className="rounded-3xl bg-slate-50 p-5"><p className="text-sm text-slate-500">Base Price</p><strong className="mt-2 block text-lg">${packageItem.price}</strong></div>
+            </div>
+            <div className="mt-6">
+              <WeatherBadge latitude={packageItem.latitude} longitude={packageItem.longitude} />
             </div>
           </section>
 

@@ -129,8 +129,8 @@ class Command(BaseCommand):
             package_objs[spec["title"]] = package
 
         traveler, created = User.objects.get_or_create(
-            username="demo_traveler",
-            defaults={"first_name": "Demo", "last_name": "Traveler", "email": "demo@example.com"},
+            username="voyageur_traveler",
+            defaults={"first_name": "Voyageur", "last_name": "Traveler", "email": "traveler@voyageur.local"},
         )
         if created:
             traveler.set_password("StrongPass123")
@@ -150,7 +150,7 @@ class Command(BaseCommand):
             )
 
         Booking.objects.get_or_create(
-            reference="VYG-DEMOBOOK1",
+            reference="VYG-BOOK-0001",
             defaults={
                 "user": traveler,
                 "package": package_objs["Santorini Sunset Escape"],
@@ -166,4 +166,4 @@ class Command(BaseCommand):
             },
         )
 
-        self.stdout.write(self.style.SUCCESS("Seed data created or already present."))
+        self.stdout.write(self.style.SUCCESS("Seed catalog data created or already present."))

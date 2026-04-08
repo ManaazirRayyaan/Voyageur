@@ -95,12 +95,40 @@ export function BookingProvider({ children }) {
           start_date: overrides.startDate || state.startDate,
           end_date: overrides.endDate || state.endDate,
           custom_notes: overrides.customNotes || "",
+          custom_destination: overrides.customDestination,
+          custom_hotel: overrides.customHotel,
+          custom_flight: overrides.customFlight,
+          custom_transport: overrides.customTransport,
+          custom_local_transport: overrides.customLocalTransport,
+          custom_activities: overrides.customActivities,
+          pricing: overrides.pricing,
         };
         if (!bookingPayload.package_id) {
           delete bookingPayload.package_id;
         }
         if (!bookingPayload.destination_id) {
           delete bookingPayload.destination_id;
+        }
+        if (!bookingPayload.custom_destination) {
+          delete bookingPayload.custom_destination;
+        }
+        if (!bookingPayload.custom_hotel) {
+          delete bookingPayload.custom_hotel;
+        }
+        if (!bookingPayload.custom_transport) {
+          delete bookingPayload.custom_transport;
+        }
+        if (!bookingPayload.custom_flight) {
+          delete bookingPayload.custom_flight;
+        }
+        if (!bookingPayload.custom_local_transport) {
+          delete bookingPayload.custom_local_transport;
+        }
+        if (!bookingPayload.custom_activities) {
+          delete bookingPayload.custom_activities;
+        }
+        if (!bookingPayload.pricing) {
+          delete bookingPayload.pricing;
         }
         const booking = await apiRequest("/api/book/", {
           method: "POST",
